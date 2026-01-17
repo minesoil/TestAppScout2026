@@ -180,9 +180,9 @@ function updateTimer() {
 document.getElementById('startTimer').addEventListener('click', () => {
   if (!timerInterval) {
     timerInterval = setInterval(() => {
-      totalmilliseconds++;
+      totalmilliseconds+=10;
       updateTimer();
-    }, 1000000);
+    }, 10);
   }
 });
 
