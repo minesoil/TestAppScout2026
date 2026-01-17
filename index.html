@@ -167,13 +167,13 @@ document.querySelectorAll('.counter button').forEach(btn => {
 
 // Endgame Timer
 let timerInterval = null;
-let seconds = 0;
+let totalmilliseconds = 0;
 const display = document.getElementById('timerDisplay');
 
 function updateTimer() {
-  let min = Math.floor(seconds / 60).toString().padStart(2,'0');
-  let sec = (seconds % 60).toString().padStart(2,'0');
-  let milli = ((sec*1000)-sec).toString().padStart(2, '0');
+  let min = Math.floor(totalmilliseconds / 60000).toString().padStart(2,'0');
+  let sec = ((totalmilliseconds % 60000)/1000).toString().padStart(2,'0');
+  let milli = ((totalmilliseconds % 1000)/10).toString().padStart(2, '0');
   display.textContent = `${min}:${sec}:${milli}`;
 }
 
