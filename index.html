@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FRC 2026 REBUILT Scouting </title>
+<title>FRC 2026 REBUILT Scouting QR</title>
 <style>
-body { font-family: Arial, sans-serif; padding: 20px; background: #eef2f7; }
+body { font-family: Arial, sans-serif; padding: 90px; background: #eef2f7; }
 h1 { text-align: center; color: #00274C; }
 nav { text-align: center; margin-bottom: 20px; }
 nav button { margin: 0 5px; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; background:#0055A4; color:white;}
@@ -20,18 +20,20 @@ button[type="submit"]:hover { background: #003D73;}
 </head>
 <body>
 
-<h1>FRC 2026 REBUILT Scouting </h1>
+<h1>FRC 2026 REBUILT Scouting QR</h1>
 
 <nav>
   <button class="tabBtn active" data-tab="auto">Autonomous</button>
   <button class="tabBtn" data-tab="teleop">Teleop</button>
   <button class="tabBtn" data-tab="endgame">Endgame</button>
+  <button class="tabBtn" data-tab="notes">Notes / Defense</button>
 </nav>
 
 <form id="scoutForm">
   <label>Team #</label><input type="number" id="team" required>
   <label>Match #</label><input type="number" id="match" required>
 
+  <!-- Autonomous Tab -->
   <div class="tabContent" id="auto">
     <label>Fuel Scored (Auto)</label><input type="number" id="autoFuel" min="0">
     <label>Starting Position</label>
@@ -40,15 +42,15 @@ button[type="submit"]:hover { background: #003D73;}
       <option value="Center">Center</option>
       <option value="Right">Right</option>
     </select>
-    <label>Notes</label><textarea id="autoNotes" placeholder="Extra observations..."></textarea>
   </div>
 
+  <!-- Teleop Tab -->
   <div class="tabContent" id="teleop" style="display:none;">
     <label>Fuel Scored (Teleop)</label><input type="number" id="teleopFuel" min="0">
     <label>Obstacles Crossed</label><input type="number" id="obstacles" min="0">
-    <label>Defense Played</label><textarea id="teleopDefense" placeholder="Defense, fouls, etc."></textarea>
   </div>
 
+  <!-- Endgame Tab -->
   <div class="tabContent" id="endgame" style="display:none;">
     <label>Climb Level</label>
     <select id="climb">
@@ -58,7 +60,13 @@ button[type="submit"]:hover { background: #003D73;}
       <option value="High">High</option>
       <option value="Traversal">Traversal</option>
     </select>
-    <label>Endgame Notes</label><textarea id="endNotes" placeholder="Final observations, penalties..."></textarea>
+  </div>
+
+  <!-- Notes / Defense Tab -->
+  <div class="tabContent" id="notes" style="display:none;">
+    <label>Autonomous Notes</label><textarea id="autoNotes" placeholder="Extra observations..."></textarea>
+    <label>Teleop / Defense Notes</label><textarea id="teleopDefense" placeholder="Defense, fouls, strategy..."></textarea>
+    <label>Endgame Notes / Penalties</label><textarea id="endNotes" placeholder="Final observations, penalties..."></textarea>
   </div>
 
   <button type="submit">Generate QR Code</button>
@@ -68,9 +76,9 @@ button[type="submit"]:hover { background: #003D73;}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 <script>
+// Tab Navigation
 const tabs = document.querySelectorAll('.tabBtn');
 const contents = document.querySelectorAll('.tabContent');
-
 tabs.forEach(tab => {
   tab.addEventListener('click', () => {
     tabs.forEach(t => t.classList.remove('active'));
@@ -80,6 +88,7 @@ tabs.forEach(tab => {
   });
 });
 
+// QR Generation
 const form = document.getElementById('scoutForm');
 const qrDiv = document.getElementById('qrcode');
 const qr = new QRious({ element: document.createElement('canvas'), size: 300 });
@@ -92,15 +101,14 @@ form.addEventListener('submit', e => {
     match: document.getElementById('match').value,
     autoFuel: document.getElementById('autoFuel').value,
     autoPos: document.getElementById('autoPos').value,
-    autoNotes: document.getElementById('autoNotes').value,
     teleopFuel: document.getElementById('teleopFuel').value,
     obstacles: document.getElementById('obstacles').value,
-    teleopDefense: document.getElementById('teleopDefense').value,
     climb: document.getElementById('climb').value,
+    autoNotes: document.getElementById('autoNotes').value,
+    teleopDefense: document.getElementById('teleopDefense').value,
     endNotes: document.getElementById('endNotes').value
   };
-  const jsonData = JSON.stringify(data);
-  qr.value = jsonData;
+  qr.value = JSON.stringify(data);
 });
 </script>
 
