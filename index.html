@@ -16,6 +16,10 @@ input, select, textarea { width: 100%; margin: 6px 0 12px; padding: 10px; border
 button[type="button"] { width: 100%; background: #0055A4; color: white; padding: 12px; border: 0; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top:10px;}
 button[type="button"]:hover { background: #003D73;}
 .tabContent { display: none; }
+.counter { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.counter button { flex: 1; padding: 10px; background: #0055A4; color: white; border: none; border-radius: 6px; cursor: pointer; }
+.counter span { flex: 1; text-align: center; font-size: 18px; }
+.timer { text-align: center; margin-top: 12px; font-size: 18px; font-weight: bold; }
 #qrcode { text-align: center; margin-top: 20px; }
 </style>
 </head>
@@ -36,7 +40,12 @@ button[type="button"]:hover { background: #003D73;}
 
   <!-- Autonomous Tab -->
   <div class="tabContent" id="auto">
-    <label>Fuel Scored (Auto)</label><input type="number" id="autoFuel" min="0">
+    <label>Fuel Scored (Auto)</label>
+    <div class="counter">
+      <button type="button" data-target="autoFuel" data-action="decrement">-</button>
+      <span id="autoFuel">0</span>
+      <button type="button" data-target="autoFuel" data-action="increment">+</button>
+    </div>
     <label>Starting Position</label>
     <select id="autoPos">
       <option value="Left">Left</option>
@@ -47,8 +56,18 @@ button[type="button"]:hover { background: #003D73;}
 
   <!-- Teleop Tab -->
   <div class="tabContent" id="teleop">
-    <label>Fuel Scored (Teleop)</label><input type="number" id="teleopFuel" min="0">
-    <label>Obstacles Crossed</label><input type="number" id="obstacles" min="0">
+    <label>Fuel Scored (Teleop)</label>
+    <div class="counter">
+      <button type="button" data-target="teleopFuel" data-action="decrement">-</button>
+      <span id="teleopFuel">0</span>
+      <button type="button" data-target="teleopFuel" data-action="increment">+</button>
+    </div>
+    <label>Obstacles Crossed</label>
+    <div class="counter">
+      <button type="button" data-target="obstacles" data-action="decrement">-</button>
+      <span id="obstacles">0</span>
+      <button type="button" data-target="obstacles" data-action="increment">+</button>
+    </div>
   </div>
 
   <!-- Endgame Tab -->
@@ -61,6 +80,14 @@ button[type="button"]:hover { background: #003D73;}
       <option value="High">High</option>
       <option value="Traversal">Traversal</option>
     </select>
+    <div class="timer">
+      <span id="timerDisplay">00:00</span>
+      <div style="margin-top:10px;">
+        <button type="button" id="startTimer">Start</button>
+        <button type="button" id="pauseTimer">Pause</button>
+        <button type="button" id="resetTimer">Reset</button>
+      </div>
+    </div>
   </div>
 
   <!-- Notes / Defense Tab -->
@@ -102,14 +129,13 @@ nextBtn.addEventListener('click', () => {
     currentIndex++;
     showTab(currentIndex);
   } else {
-    // Last page → generate QR
     const data = {
       team: document.getElementById('team').value,
       match: document.getElementById('match').value,
-      autoFuel: document.getElementById('autoFuel').value,
+      autoFuel: document.getElementById('autoFuel').textContent,
       autoPos: document.getElementById('autoPos').value,
-      teleopFuel: document.getElementById('teleopFuel').value,
-      obstacles: document.getElementById('obstacles').value,
+      teleopFuel: document.getElementById('teleopFuel').textContent,
+      obstacles: document.getElementById('obstacles').textContent,
       climb: document.getElementById('climb').value,
       autoNotes: document.getElementById('autoNotes').value,
       teleopDefense: document.getElementById('teleopDefense').value,
@@ -120,12 +146,55 @@ nextBtn.addEventListener('click', () => {
   }
 });
 
-// Optional: Click nav tabs manually
+// Manual tab click
 tabs.forEach((tab, idx) => {
   tab.addEventListener('click', () => {
     currentIndex = idx;
     showTab(currentIndex);
   });
+});
+
+// Counter buttons
+document.querySelectorAll('.counter button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = document.getElementById(btn.dataset.target);
+    let val = parseInt(target.textContent);
+    if (btn.dataset.action === "increment") val++;
+    else if (btn.dataset.action === "decrement" && val > 0) val--;
+    target.textContent = val;
+  });
+});
+
+// Endgame Timer
+let timerInterval = null;
+let seconds = 0;
+const display = document.getElementById('timerDisplay');
+
+function updateTimer() {
+  let min = Math.floor(seconds / 60).toString().padStart(2,'0');
+  let sec = (seconds % 60).toString().padStart(2,'0');
+  display.textContent = `${min}:${sec}`;
+}
+
+document.getElementById('startTimer').addEventListener('click', () => {
+  if (!timerInterval) {
+    timerInterval = setInterval(() => {
+      seconds++;
+      updateTimer();
+    }, 1000);
+  }
+});
+
+document.getElementById('pauseTimer').addEventListener('click', () => {
+  clearInterval(timerInterval);
+  timerInterval = null;
+});
+
+document.getElementById('resetTimer').addEventListener('click', () => {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  seconds = 0;
+  updateTimer();
 });
 </script>
 
