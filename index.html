@@ -1,4 +1,28 @@
-<!-- Navigation tabs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRC 2026 REBUILT Scouting QR</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 20px; background: #eef2f7; }
+h1 { text-align: center; color: #00274C; margin-bottom: 20px;}
+nav { text-align: center; margin-bottom: 20px; }
+nav button { margin: 0 5px; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; background:#0055A4; color:white;}
+nav button.active { background: #003D73; }
+form { background: white; padding: 18px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); max-width: 540px; margin: auto;}
+label { font-weight: bold; margin-top: 8px; display: block; }
+input, select, textarea { width: 100%; margin: 6px 0 12px; padding: 10px; border: 1px solid #aaa; border-radius: 6px; box-sizing: border-box;}
+button[type="button"] { width: 100%; background: #0055A4; color: white; padding: 12px; border: 0; border-radius: 6px; font-size: 16px; cursor: pointer; margin-top:10px;}
+button[type="button"]:hover { background: #003D73;}
+.tabContent { display: none; }
+#qrcode { text-align: center; margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<h1>FRC 2026 — REBUILT Scouting QR</h1>
+
 <nav>
   <button class="tabBtn active" data-tab="auto">Autonomous</button>
   <button class="tabBtn" data-tab="teleop">Teleop</button>
@@ -10,11 +34,41 @@
   <label>Team #</label><input type="number" id="team" required>
   <label>Match #</label><input type="number" id="match" required>
 
-  <!-- Tabs content -->
-  <div class="tabContent" id="auto"> ... </div>
-  <div class="tabContent" id="teleop" style="display:none;"> ... </div>
-  <div class="tabContent" id="endgame" style="display:none;"> ... </div>
-  <div class="tabContent" id="notes" style="display:none;"> ... </div>
+  <!-- Autonomous Tab -->
+  <div class="tabContent" id="auto">
+    <label>Fuel Scored (Auto)</label><input type="number" id="autoFuel" min="0">
+    <label>Starting Position</label>
+    <select id="autoPos">
+      <option value="Left">Left</option>
+      <option value="Center">Center</option>
+      <option value="Right">Right</option>
+    </select>
+  </div>
+
+  <!-- Teleop Tab -->
+  <div class="tabContent" id="teleop">
+    <label>Fuel Scored (Teleop)</label><input type="number" id="teleopFuel" min="0">
+    <label>Obstacles Crossed</label><input type="number" id="obstacles" min="0">
+  </div>
+
+  <!-- Endgame Tab -->
+  <div class="tabContent" id="endgame">
+    <label>Climb Level</label>
+    <select id="climb">
+      <option value="None">None</option>
+      <option value="Low">Low</option>
+      <option value="Mid">Mid</option>
+      <option value="High">High</option>
+      <option value="Traversal">Traversal</option>
+    </select>
+  </div>
+
+  <!-- Notes / Defense Tab -->
+  <div class="tabContent" id="notes">
+    <label>Autonomous Notes</label><textarea id="autoNotes" placeholder="Extra observations..."></textarea>
+    <label>Teleop / Defense Notes</label><textarea id="teleopDefense" placeholder="Defense, fouls, strategy..."></textarea>
+    <label>Endgame Notes / Penalties</label><textarea id="endNotes" placeholder="Final observations, penalties..."></textarea>
+  </div>
 
   <button type="button" id="nextBtn">Next</button>
 </form>
@@ -23,6 +77,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 <script>
+// Tab Navigation
 const tabs = Array.from(document.querySelectorAll('.tabBtn'));
 const contents = Array.from(document.querySelectorAll('.tabContent'));
 const nextBtn = document.getElementById('nextBtn');
@@ -32,15 +87,14 @@ qrDiv.appendChild(qr.element);
 
 let currentIndex = 0;
 
-// Function to show a tab by index
 function showTab(index) {
   tabs.forEach((t,i) => t.classList.toggle('active', i === index));
   contents.forEach((c,i) => c.style.display = (i === index) ? 'block' : 'none');
-  // Show QR only on the last page
   qrDiv.style.display = (index === contents.length - 1) ? 'block' : 'none';
   nextBtn.textContent = (index === contents.length - 1) ? 'Generate QR Code' : 'Next';
 }
 
+// Initialize first tab
 showTab(currentIndex);
 
 nextBtn.addEventListener('click', () => {
@@ -65,4 +119,15 @@ nextBtn.addEventListener('click', () => {
     alert("QR Code generated! Scan to save this match data.");
   }
 });
+
+// Optional: Click nav tabs manually
+tabs.forEach((tab, idx) => {
+  tab.addEventListener('click', () => {
+    currentIndex = idx;
+    showTab(currentIndex);
+  });
+});
 </script>
+
+</body>
+</html>
