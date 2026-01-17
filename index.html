@@ -180,7 +180,7 @@ function updateTimer() {
 document.getElementById('startTimer').addEventListener('click', () => {
   if (!timerInterval) {
     timerInterval = setInterval(() => {
-      seconds++;
+      totalmilliseconds++;
       updateTimer();
     }, 1000);
   }
@@ -194,7 +194,7 @@ document.getElementById('pauseTimer').addEventListener('click', () => {
 document.getElementById('resetTimer').addEventListener('click', () => {
   clearInterval(timerInterval);
   timerInterval = null;
-  seconds = 0;
+  totalmilliseconds = 0;
   updateTimer();
 });
 </script>
