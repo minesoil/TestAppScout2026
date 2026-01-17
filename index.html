@@ -81,7 +81,7 @@ button[type="button"]:hover { background: #003D73;}
       <option value="Traversal">Traversal</option>
     </select>
     <div class="timer">
-      <span id="timerDisplay">00:00</span>
+      <span id="timerDisplay">00:00:00</span>
       <div style="margin-top:10px;">
         <button type="button" id="startTimer">Start</button>
         <button type="button" id="pauseTimer">Pause</button>
@@ -173,7 +173,8 @@ const display = document.getElementById('timerDisplay');
 function updateTimer() {
   let min = Math.floor(seconds / 60).toString().padStart(2,'0');
   let sec = (seconds % 60).toString().padStart(2,'0');
-  display.textContent = `${min}:${sec}`;
+  let milli = ((sec*1000)-sec).toString().padStart(2, '0');
+  display.textContent = `${min}:${sec}:${milli}`;
 }
 
 document.getElementById('startTimer').addEventListener('click', () => {
